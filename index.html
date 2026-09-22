@@ -3,575 +3,183 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SQL зертханасы</title>
+  <title>SQL практикумы — 80 минут</title>
   <style>
-    :root {
-      --bg: #eef4f8;
-      --panel: #ffffff;
-      --ink: #102a43;
-      --muted: #5b7083;
-      --navy: #0b1f33;
-      --blue: #1677ff;
-      --teal: #00a6a6;
-      --green: #18875f;
-      --amber: #e68a00;
-      --red: #d64045;
-      --line: #d7e2eb;
-      --soft-blue: #eaf3ff;
-      --soft-teal: #e8f8f6;
-      --soft-red: #fff0f0;
-      --shadow: 0 12px 35px rgba(11, 31, 51, .09);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
-      line-height: 1.45;
-    }
-    button, textarea, select { font: inherit; }
-    button { cursor: pointer; }
-    .app { min-height: 100vh; }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 24px;
-      padding: 22px 30px;
-      background: var(--navy);
-      color: white;
-    }
-    .brand h1 { margin: 0; font-size: clamp(24px, 3vw, 38px); }
-    .brand p { margin: 5px 0 0; color: #bcd0df; }
-    .progress-wrap { min-width: 230px; }
-    .progress-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 7px; }
-    .progress { height: 10px; background: #274158; border-radius: 999px; overflow: hidden; }
-    .progress > div { height: 100%; width: 0; background: var(--teal); transition: width .25s ease; }
-    .layout {
-      display: grid;
-      grid-template-columns: 330px minmax(0, 1fr);
-      gap: 22px;
-      max-width: 1500px;
-      margin: 0 auto;
-      padding: 22px;
-    }
-    .sidebar, .workspace { min-width: 0; }
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-    }
-    .side-panel { padding: 18px; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; }
-    .tabs { display: grid; grid-template-columns: 1fr 1fr; background: #edf3f7; padding: 4px; border-radius: 12px; margin-bottom: 16px; }
-    .tab {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 9px 8px;
-      border-radius: 9px;
-      font-weight: 700;
-    }
-    .tab.active { background: white; color: var(--navy); box-shadow: 0 2px 8px rgba(11,31,51,.08); }
-    .tab-content[hidden] { display: none; }
-    .example, .task {
-      width: 100%;
-      text-align: left;
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--ink);
-      padding: 12px;
-      border-radius: 12px;
-      margin: 0 0 9px;
-      transition: border-color .15s, transform .15s, background .15s;
-    }
-    .example:hover, .task:hover { border-color: var(--blue); transform: translateY(-1px); }
-    .example strong, .task strong { display: block; margin-bottom: 3px; }
-    .example span, .task span { display: block; color: var(--muted); font-size: 13px; }
-    .task.done { border-color: #78c9aa; background: #effaf5; }
-    .task.active { border-color: var(--blue); background: var(--soft-blue); }
-    .task-number {
-      display: inline-flex !important;
-      width: 25px;
-      height: 25px;
-      align-items: center;
-      justify-content: center;
-      margin-right: 7px;
-      border-radius: 50%;
-      background: var(--blue);
-      color: white !important;
-      font-weight: 800;
-      font-size: 12px !important;
-    }
-    .workspace { display: grid; gap: 18px; }
-    .editor-panel { overflow: hidden; }
-    .panel-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      padding: 16px 18px;
-      border-bottom: 1px solid var(--line);
-    }
-    .panel-head h2, .panel-head h3 { margin: 0; font-size: 19px; }
-    .panel-head small { color: var(--muted); }
-    .editor {
-      width: 100%;
-      min-height: 230px;
-      resize: vertical;
-      border: 0;
-      outline: 0;
-      padding: 22px;
-      background: #0f172a;
-      color: #e6f1ff;
-      font: 18px/1.65 Consolas, "Courier New", monospace;
-      tab-size: 2;
-    }
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      padding: 14px 18px;
-      background: #f8fbfd;
-      border-top: 1px solid var(--line);
-    }
-    .btn {
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--ink);
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-weight: 750;
-    }
-    .btn:hover { border-color: var(--blue); }
-    .btn-primary { background: var(--blue); border-color: var(--blue); color: white; }
-    .btn-teal { background: var(--teal); border-color: var(--teal); color: white; }
-    .btn-danger { color: var(--red); }
-    .shortcut { margin-left: auto; align-self: center; color: var(--muted); font-size: 13px; }
-    .message { padding: 13px 18px; border-bottom: 1px solid var(--line); font-weight: 700; }
-    .message.info { color: var(--blue); background: var(--soft-blue); }
-    .message.success { color: var(--green); background: var(--soft-teal); }
-    .message.error { color: var(--red); background: var(--soft-red); }
-    .result-body { padding: 16px 18px 20px; min-height: 155px; }
-    .empty { color: var(--muted); padding: 28px 6px; text-align: center; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { padding: 11px 13px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
-    th { background: var(--navy); color: white; font-size: 14px; }
-    tbody tr:nth-child(even) { background: #f5f8fb; }
-    .schema-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-    .schema-card { overflow: hidden; }
-    .schema-card .panel-head select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: white; }
-    .schema-body { padding: 0 16px 16px; overflow-x: auto; }
-    .hint-box {
-      padding: 15px 18px;
-      border-radius: 14px;
-      background: #fff7e8;
-      border: 1px solid #f5d08a;
-      color: #7a4a00;
-    }
-    .hint-box strong { display: block; margin-bottom: 4px; }
-    .mini { font-size: 13px; color: var(--muted); }
-    kbd { background: #e7eef4; border: 1px solid #cad7e2; border-bottom-width: 2px; border-radius: 5px; padding: 2px 6px; color: var(--navy); }
-    @media (max-width: 940px) {
-      .layout { grid-template-columns: 1fr; }
-      .side-panel { position: static; max-height: none; }
-      .schema-grid { grid-template-columns: 1fr; }
-      .progress-wrap { display: none; }
-    }
-    @media (max-width: 560px) {
-      .topbar { padding: 18px; }
-      .layout { padding: 12px; }
-      .panel-head { align-items: flex-start; flex-direction: column; }
-      .shortcut { width: 100%; margin-left: 0; }
-      .editor { font-size: 15px; min-height: 210px; }
-    }
+    :root{--navy:#0b1f33;--blue:#1677ff;--teal:#00a6a6;--green:#1d8f64;--amber:#e88c00;--red:#d9474d;--ink:#102a43;--muted:#607589;--bg:#edf3f7;--panel:#fff;--line:#d6e2eb;--soft:#f6f9fc;--softBlue:#eaf3ff;--softGreen:#eaf8f2;--shadow:0 12px 34px rgba(11,31,51,.09)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif;line-height:1.45}button,textarea,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+    .top{background:var(--navy);color:white;padding:18px 26px;display:flex;align-items:center;gap:22px;position:sticky;top:0;z-index:20;box-shadow:0 4px 20px rgba(4,17,29,.2)}
+    .brand{min-width:270px}.brand h1{font-size:26px;margin:0}.brand p{margin:3px 0 0;color:#b9cddd;font-size:13px}.top-stat{display:flex;align-items:center;gap:10px;margin-left:auto}.stat{background:#17344d;border:1px solid #294861;border-radius:12px;padding:8px 12px;min-width:100px}.stat span{display:block;color:#a9c2d5;font-size:11px;text-transform:uppercase}.stat strong{font-size:19px}.timer.warn strong{color:#ffc857}.top button{border:1px solid #446178;background:transparent;color:white;border-radius:10px;padding:10px 12px;font-weight:700}
+    .app{max-width:1600px;margin:0 auto;padding:18px;display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.side{max-height:calc(100vh - 100px);overflow:auto;position:sticky;top:92px}.side-head{padding:17px;border-bottom:1px solid var(--line)}.side-head h2{font-size:19px;margin:0 0 5px}.side-head p{font-size:13px;color:var(--muted);margin:0}.stages{padding:12px}.stage{margin-bottom:12px}.stage-title{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;padding:7px 5px}.task{width:100%;border:1px solid var(--line);border-radius:12px;background:white;text-align:left;padding:11px;margin-bottom:7px;display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:start;color:var(--ink)}.task:hover{border-color:var(--blue)}.task.active{border-color:var(--blue);background:var(--softBlue)}.task.done{border-color:#7acaae;background:var(--softGreen)}.num{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#dfeaf3;color:var(--navy);font-size:12px;font-weight:900}.done .num{background:var(--green);color:white}.task b{font-size:14px}.task small{display:block;color:var(--muted);font-size:12px;margin-top:3px}.pts{font-size:11px;color:var(--blue);font-weight:900;white-space:nowrap}
+    .main{min-width:0;display:grid;gap:16px}.lesson-progress{padding:14px 17px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.bar{height:11px;background:#e3ebf1;border-radius:999px;overflow:hidden}.bar div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal));transition:width .25s}.lesson-progress strong{font-size:14px}
+    .challenge{padding:18px}.challenge-top{display:flex;gap:12px;align-items:flex-start}.challenge-index{width:42px;height:42px;border-radius:12px;background:var(--blue);color:white;display:grid;place-items:center;font-weight:900}.challenge h2{margin:0 0 5px;font-size:22px}.challenge p{margin:0;color:var(--muted)}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.chip{font-size:12px;font-weight:800;padding:6px 9px;border-radius:999px;background:#eef4f8;color:var(--muted)}.challenge-actions{display:flex;gap:8px;margin-top:14px}.btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:10px;padding:9px 13px;font-weight:800}.btn:hover{border-color:var(--blue)}.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn.teal{background:var(--teal);border-color:var(--teal);color:white}.btn.danger{color:var(--red)}.hint{margin-top:12px;padding:12px 14px;background:#fff7e8;border:1px solid #f3cf8a;border-radius:11px;color:#815000;font-size:14px}
+    .work-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:16px}.editor-panel{overflow:hidden}.head{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.head h3{margin:0;font-size:17px}.head small{color:var(--muted)}textarea{width:100%;height:310px;border:0;outline:0;resize:vertical;background:#0f172a;color:#e6f1ff;padding:18px;font:17px/1.6 Consolas,"Courier New",monospace;tab-size:2}.toolbar{padding:12px 14px;background:#f8fbfd;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}.toolbar .keys{margin-left:auto;color:var(--muted);font-size:12px;align-self:center}kbd{padding:2px 5px;background:#e6edf3;border:1px solid #cad6e0;border-bottom-width:2px;border-radius:5px;color:var(--navy)}
+    .result-panel{min-width:0}.status{padding:11px 15px;font-weight:800;font-size:14px}.status.info{background:var(--softBlue);color:var(--blue)}.status.ok{background:var(--softGreen);color:var(--green)}.status.bad{background:#fff0f0;color:var(--red)}.result{padding:12px;min-height:310px;max-height:420px;overflow:auto}.empty{color:var(--muted);text-align:center;padding:55px 10px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;background:white}th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:14px}th{background:var(--navy);color:white;position:sticky;top:0}tbody tr:nth-child(even){background:#f5f8fb}
+    .bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px}.tabs{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line);overflow:auto}.tab{border:0;background:#edf3f7;color:var(--muted);padding:7px 10px;border-radius:9px;font-weight:800}.tab.active{background:var(--navy);color:white}.data{padding:12px;max-height:290px;overflow:auto}.leader-list{padding:10px 14px 16px}.leader{display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}.rank{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#e7eff5;font-weight:900}.leader:first-child .rank{background:#ffe3a3;color:#7b4a00}.leader small{color:var(--muted)}.leader strong:last-child{color:var(--blue)}
+    .modal{position:fixed;inset:0;background:rgba(5,18,31,.78);display:grid;place-items:center;z-index:100;padding:18px}.modal-card{width:min(480px,100%);background:white;border-radius:20px;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.35)}.modal-card h2{margin:0 0 8px;font-size:27px}.modal-card p{color:var(--muted);margin:0 0 18px}.modal-card label{display:block;font-weight:800;margin-bottom:7px}.modal-card input{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 13px;font-size:17px;outline:none}.modal-card input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,119,255,.12)}.modal-card button{width:100%;margin-top:13px}.note{font-size:12px;color:var(--muted);margin-top:12px;text-align:center}.loading{position:fixed;inset:0;background:var(--navy);color:white;display:grid;place-items:center;z-index:90;text-align:center}.loading b{font-size:24px}.loading span{display:block;color:#b9cddd;margin-top:8px}
+    @media(max-width:1100px){.app{grid-template-columns:310px minmax(0,1fr)}.work-grid,.bottom{grid-template-columns:1fr}.result{min-height:220px}.brand p{display:none}}
+    @media(max-width:760px){.top{position:static;flex-wrap:wrap}.brand{min-width:0;width:100%}.top-stat{margin:0;flex-wrap:wrap}.stat{min-width:92px}.app{grid-template-columns:1fr;padding:10px}.side{position:static;max-height:none}.work-grid{grid-template-columns:1fr}.challenge-top{align-items:flex-start}textarea{height:260px}.toolbar .keys{width:100%;margin-left:0}.bottom{grid-template-columns:1fr}}
   </style>
+  <script src="https://sql.js.org/dist/sql-wasm.js"></script>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <h1>SQL зертханасы</h1>
-        <p>Сұранысты жаз, орында және нәтижені бірден тексер</p>
-      </div>
-      <div class="progress-wrap" aria-label="Тапсырмалар прогресі">
-        <div class="progress-label"><span>Орындалған тапсырмалар</span><strong id="progressText">0 / 10</strong></div>
-        <div class="progress"><div id="progressBar"></div></div>
-      </div>
-    </header>
-
-    <main class="layout">
-      <aside class="sidebar">
-        <section class="panel side-panel">
-          <div class="tabs" role="tablist" aria-label="Бөлімдер">
-            <button class="tab active" id="examplesTab" role="tab" aria-selected="true">Мысалдар</button>
-            <button class="tab" id="tasksTab" role="tab" aria-selected="false">Тапсырмалар</button>
-          </div>
-          <div id="examplesPanel" class="tab-content"></div>
-          <div id="tasksPanel" class="tab-content" hidden></div>
-        </section>
-      </aside>
-
-      <section class="workspace">
-        <section class="panel editor-panel">
-          <div class="panel-head">
-            <div>
-              <h2>SQL редакторы</h2>
-              <small>Бір уақытта бір команданы орындаңыз</small>
-            </div>
-            <button class="btn" id="showHintBtn">Көмек көрсету</button>
-          </div>
-          <textarea id="sqlEditor" class="editor" spellcheck="false" aria-label="SQL сұранысы">SELECT *
-FROM teachers
-LIMIT 3;</textarea>
-          <div id="hintBox" class="hint-box" hidden></div>
-          <div class="toolbar">
-            <button class="btn btn-primary" id="runBtn">▶ Орындау</button>
-            <button class="btn" id="clearBtn">Тазалау</button>
-            <button class="btn btn-danger" id="resetBtn">Кестелерді қалпына келтіру</button>
-            <span class="shortcut"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> арқылы орындауға болады</span>
-          </div>
-        </section>
-
-        <section class="panel" aria-live="polite">
-          <div class="panel-head"><h2>Нәтиже</h2><small id="rowCount"></small></div>
-          <div id="message" class="message info">Сұранысты орындауға дайын</div>
-          <div id="result" class="result-body"><div class="empty">Нәтиже осы жерде көрсетіледі</div></div>
-        </section>
-
-        <div class="schema-grid">
-          <section class="panel schema-card">
-            <div class="panel-head">
-              <h3>Бастапқы кестелер</h3>
-              <select id="tableSelect" aria-label="Кестені таңдау">
-                <option value="teachers">teachers</option>
-                <option value="students">students</option>
-              </select>
-            </div>
-            <div id="schemaTable" class="schema-body"></div>
-          </section>
-          <section class="panel schema-card">
-            <div class="panel-head"><h3>Қолдануға болатын командалар</h3></div>
-            <div class="schema-body">
-              <table>
-                <thead><tr><th>Команда</th><th>Қызметі</th></tr></thead>
-                <tbody>
-                  <tr><td><code>WHERE</code></td><td>Жолдарды шартпен таңдайды</td></tr>
-                  <tr><td><code>ORDER BY</code></td><td>Нәтижені сұрыптайды</td></tr>
-                  <tr><td><code>LIMIT</code></td><td>Нәтиже жолдарын шектейді</td></tr>
-                  <tr><td><code>COUNT, SUM, AVG</code></td><td>Санақ және есептеу жүргізеді</td></tr>
-                  <tr><td><code>MIN, MAX</code></td><td>Шеткі мәндерді табады</td></tr>
-                  <tr><td><code>GROUP BY</code></td><td>Бірдей мәндерді топтайды</td></tr>
-                  <tr><td><code>INSERT, UPDATE, DELETE</code></td><td>Кестедегі деректі өзгертеді</td></tr>
-                </tbody>
-              </table>
-              <p class="mini">Бұл оқу парақшасы сабақтағы негізгі SQL командаларын орындауға арналған.</p>
-            </div>
-          </section>
-        </div>
-      </section>
-    </main>
+  <div id="loading" class="loading"><div><b>SQLite жүктеліп жатыр...</b><span>Интернет байланысын тексеріңіз</span></div></div>
+  <div id="nameModal" class="modal hidden">
+    <form id="nameForm" class="modal-card">
+      <h2>Практикумға қош келдіңіз!</h2>
+      <p>Нәтиже мен ұпайды сақтау үшін аты-жөніңізді жазыңыз.</p>
+      <label for="studentName">Аты-жөні</label>
+      <input id="studentName" maxlength="50" placeholder="Мысалы: Айдана Серікқызы" autocomplete="name" required>
+      <button class="btn primary" type="submit">Сабақты бастау</button>
+      <div class="note">Рейтинг осы браузерде сақталады.</div>
+    </form>
   </div>
 
+  <header class="top">
+    <div class="brand"><h1>SQL практикумы</h1><p>80 минут · 20 тапсырма · нақты SQLite</p></div>
+    <div class="top-stat">
+      <div class="stat"><span>Қатысушы</span><strong id="nameView">—</strong></div>
+      <div class="stat"><span>Ұпай</span><strong id="scoreView">0 / 100</strong></div>
+      <div class="stat timer" id="timerBox"><span>Уақыт</span><strong id="timerView">80:00</strong></div>
+      <button id="pauseBtn">Үзіліс</button><button id="switchBtn">Ауыстыру</button>
+    </div>
+  </header>
+
+  <main class="app">
+    <aside class="panel side">
+      <div class="side-head"><h2>Тапсырмалар картасы</h2><p>Кезеңдерді ретімен орындаңыз</p></div>
+      <div id="taskList" class="stages"></div>
+    </aside>
+
+    <section class="main">
+      <section class="panel lesson-progress"><div class="bar"><div id="progressBar"></div></div><strong id="progressText">0 / 20</strong></section>
+      <section class="panel challenge">
+        <div class="challenge-top"><div id="challengeIndex" class="challenge-index">1</div><div><h2 id="challengeTitle">Тапсырма</h2><p id="challengePrompt"></p></div></div>
+        <div class="chips"><span id="stageChip" class="chip"></span><span id="timeChip" class="chip"></span><span class="chip">5 ұпай</span></div>
+        <div class="challenge-actions"><button id="hintBtn" class="btn">Кеңес</button><button id="starterBtn" class="btn">Бастапқы код</button></div>
+        <div id="hintBox" class="hint hidden"></div>
+      </section>
+
+      <div class="work-grid">
+        <section class="panel editor-panel">
+          <div class="head"><h3>SQL редакторы</h3><small>Бір немесе бірнеше команда жазуға болады</small></div>
+          <textarea id="editor" spellcheck="false" aria-label="SQL редакторы">SELECT * FROM products;</textarea>
+          <div class="toolbar"><button id="runBtn" class="btn primary">▶ Орындау және тексеру</button><button id="clearBtn" class="btn">Тазалау</button><button id="resetBtn" class="btn danger">Дерекқорды қалпына келтіру</button><span class="keys"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></span></div>
+        </section>
+        <section class="panel result-panel" aria-live="polite">
+          <div class="head"><h3>Нәтиже</h3><small id="rowInfo"></small></div>
+          <div id="status" class="status info">Сұранысты орындауға дайын</div>
+          <div id="result" class="result"><div class="empty">Нәтиже осы жерде көрсетіледі</div></div>
+        </section>
+      </div>
+
+      <div class="bottom">
+        <section class="panel"><div class="head"><h3>Дерекқор кестелері</h3><small>Сұраныстан кейін жаңарады</small></div><div id="tableTabs" class="tabs"></div><div id="dataView" class="data"></div></section>
+        <section class="panel"><div class="head"><h3>Рейтинг</h3><small>Осы құрылғыдағы нәтижелер</small></div><div id="leaderboard" class="leader-list"></div></section>
+      </div>
+    </section>
+  </main>
+
   <script>
-    const initialDb = {
-      teachers: [
-        { id: 1, name: "Айгүл", subject: "Информатика", experience: 8, city: "Алматы" },
-        { id: 2, name: "Нұрлан", subject: "Математика", experience: 12, city: "Астана" },
-        { id: 3, name: "Дана", subject: "Ағылшын тілі", experience: 5, city: "Шымкент" },
-        { id: 4, name: "Ерлан", subject: "Физика", experience: 10, city: "Қарағанды" },
-        { id: 5, name: "Мадина", subject: "Информатика", experience: 3, city: "Тараз" },
-        { id: 6, name: "Арман", subject: "Математика", experience: 7, city: "Алматы" }
-      ],
-      students: [
-        { id: 1, name: "Айдана", age: 18, city: "Алматы", grade: 92 },
-        { id: 2, name: "Марат", age: 19, city: "Астана", grade: 78 },
-        { id: 3, name: "Дана", age: 18, city: "Шымкент", grade: 88 },
-        { id: 4, name: "Әли", age: 20, city: "Алматы", grade: 95 },
-        { id: 5, name: "Жанар", age: 19, city: "Тараз", grade: 84 },
-        { id: 6, name: "Руслан", age: 18, city: "Астана", grade: 73 }
-      ]
-    };
-    let db = structuredClone(initialDb);
-    let activeTask = null;
-    const completed = new Set();
-
-    const examples = [
-      ["LIMIT", "Алғашқы 3 жол", "SELECT *\nFROM teachers\nLIMIT 3;"],
-      ["ORDER BY + LIMIT", "Тәжірибесі ең көп 2 мұғалім", "SELECT name, experience\nFROM teachers\nORDER BY experience DESC\nLIMIT 2;"],
-      ["COUNT", "Мұғалімдердің жалпы саны", "SELECT COUNT(*) AS teacher_count\nFROM teachers;"],
-      ["SUM", "Еңбек өтілдерінің қосындысы", "SELECT SUM(experience) AS total_experience\nFROM teachers;"],
-      ["AVG", "Орташа еңбек өтілі", "SELECT AVG(experience) AS average_experience\nFROM teachers;"],
-      ["MIN және MAX", "Ең аз және ең көп өтіл", "SELECT MIN(experience) AS minimum,\n       MAX(experience) AS maximum\nFROM teachers;"],
-      ["WHERE + AVG", "Информатика мұғалімдерінің орташа өтілі", "SELECT AVG(experience) AS average\nFROM teachers\nWHERE subject = 'Информатика';"],
-      ["GROUP BY", "Әр пәндегі мұғалім саны", "SELECT subject, COUNT(*) AS teacher_count\nFROM teachers\nGROUP BY subject;"],
-      ["GROUP BY + ORDER BY", "Пәндерді мұғалім саны бойынша реттеу", "SELECT subject, COUNT(*) AS teacher_count\nFROM teachers\nGROUP BY subject\nORDER BY teacher_count DESC;"],
-      ["UPDATE", "Мұғалімнің қаласын өзгерту", "UPDATE teachers\nSET city = 'Алматы'\nWHERE id = 3;"],
-      ["INSERT", "Жаңа мұғалім қосу", "INSERT INTO teachers (id, name, subject, experience, city)\nVALUES (7, 'Салтанат', 'Химия', 6, 'Астана');"],
-      ["DELETE", "id = 7 жолын өшіру", "DELETE FROM teachers\nWHERE id = 7;"]
+    const stages=[
+      {id:1,title:"1. Қыздыру",minutes:10,color:"#1677ff"},
+      {id:2,title:"2. WHERE және шарттар",minutes:15,color:"#00a6a6"},
+      {id:3,title:"3. ORDER BY және LIMIT",minutes:10,color:"#7257d5"},
+      {id:4,title:"4. Агрегаттық функциялар",minutes:15,color:"#e88c00"},
+      {id:5,title:"5. GROUP BY",minutes:15,color:"#1d8f64"},
+      {id:6,title:"6. Кесте және деректі өзгерту",minutes:15,color:"#d9474d"}
     ];
-
-    const tasks = [
-      { title: "Алғашқы төрт мұғалім", prompt: "teachers кестесінен алғашқы 4 жолды көрсетіңіз.", hint: "SELECT және LIMIT 4 қолданыңыз.", test: q => has(q, "FROM teachers", "LIMIT 4") },
-      { title: "Үздік үш тәжірибе", prompt: "Еңбек өтілі ең көп 3 мұғалімнің аты мен өтілін көрсетіңіз.", hint: "ORDER BY experience DESC және LIMIT 3 керек.", test: q => has(q, "ORDER BY experience DESC", "LIMIT 3") && /select\s+name\s*,\s*experience/i.test(q) },
-      { title: "Жалпы мұғалім саны", prompt: "Кестеде неше мұғалім барын есептеңіз.", hint: "COUNT(*) функциясын қолданыңыз.", test: q => /count\s*\(\s*\*\s*\)/i.test(q) && /from\s+teachers/i.test(q) },
-      { title: "Орташа өтіл", prompt: "Барлық мұғалімнің орташа еңбек өтілін табыңыз.", hint: "AVG(experience) қолданыңыз.", test: q => /avg\s*\(\s*experience\s*\)/i.test(q) && /from\s+teachers/i.test(q) },
-      { title: "Информатика пәні", prompt: "Информатика мұғалімдерінің орташа еңбек өтілін табыңыз.", hint: "AVG функциясына WHERE subject = 'Информатика' шартын қосыңыз.", test: q => /avg\s*\(\s*experience\s*\)/i.test(q) && /where\s+subject\s*=\s*['\"]Информатика['\"]/i.test(q) },
-      { title: "Пән бойынша сан", prompt: "Әр пәнде неше мұғалім барын көрсетіңіз.", hint: "subject бағанын GROUP BY арқылы топтаңыз.", test: q => /count\s*\(\s*\*\s*\)/i.test(q) && /group\s+by\s+subject/i.test(q) },
-      { title: "Көптен азға", prompt: "Пәндерді мұғалім саны бойынша кему ретімен көрсетіңіз.", hint: "COUNT(*) нәтижесіне атау беріп, ORDER BY ... DESC қолданыңыз.", test: q => /group\s+by\s+subject/i.test(q) && /order\s+by\s+\w+\s+desc/i.test(q) },
-      { title: "Алматыдағы мұғалімдер", prompt: "Алматыдағы мұғалімдердің аты мен пәнін көрсетіңіз.", hint: "WHERE city = 'Алматы' шартын жазыңыз.", test: q => /select\s+name\s*,\s*subject/i.test(q) && /where\s+city\s*=\s*['\"]Алматы['\"]/i.test(q) },
-      { title: "Студенттердің орташа балы", prompt: "students кестесіндегі орташа grade мәнін табыңыз.", hint: "AVG(grade) және FROM students қолданыңыз.", test: q => /avg\s*\(\s*grade\s*\)/i.test(q) && /from\s+students/i.test(q) },
-      { title: "Қала бойынша студенттер", prompt: "Әр қаладағы студенттердің санын көрсетіңіз.", hint: "city бағанын GROUP BY арқылы топтаңыз.", test: q => /from\s+students/i.test(q) && /group\s+by\s+city/i.test(q) && /count\s*\(/i.test(q) }
+    const norm=s=>s.toLowerCase().replace(/--.*$/gm,"").replace(/\s+/g," ").trim();
+    const includes=(q,...parts)=>parts.every(p=>norm(q).includes(p.toLowerCase()));
+    const firstValue=r=>r?.[0]?.values?.[0]?.[0];
+    const rows=r=>r?.[0]?.values||[];
+    const cols=r=>r?.[0]?.columns||[];
+    const sequence=(r,col)=>{const i=cols(r).indexOf(col);return i<0?[]:rows(r).map(x=>Number(x[i]));};
+    const tasks=[
+      {stage:1,title:"Дүкендегі барлық тауар",prompt:"products кестесіндегі барлық баған мен жолды көрсетіңіз.",hint:"SELECT * және FROM products жазыңыз.",starter:"SELECT *\nFROM products;",check:(q,r)=>includes(q,"select *","from products")&&rows(r).length===6},
+      {stage:1,title:"Қажетті бағандар",prompt:"Фильмдердің тек title және rating бағандарын көрсетіңіз.",hint:"Баған атауларын үтірмен бөліңіз.",starter:"SELECT title, rating\nFROM movies;",check:(q,r)=>includes(q,"from movies")&&cols(r).join(",")==="title,rating"&&rows(r).length===6},
+      {stage:2,title:"Қысқа фильмдер",prompt:"movies кестесінен ұзақтығы 105 минуттан аспайтын фильмдерді көрсетіңіз.",hint:"WHERE duration <= 105 шартын қолданыңыз.",starter:"SELECT *\nFROM movies\nWHERE duration <= 105;",check:(q,r)=>includes(q,"from movies")&&/where\s+duration\s*<=\s*105/i.test(q)&&rows(r).length===3},
+      {stage:2,title:"Logitech тауарлары",prompt:"Бренді Logitech болатын тауарларды көрсетіңіз.",hint:"Мәтін бір тырнақшаға жазылады.",starter:"SELECT *\nFROM products\nWHERE brand = 'Logitech';",check:(q,r)=>includes(q,"from products")&&/where\s+brand\s*=\s*['\"]logitech['\"]/i.test(q)&&rows(r).length===2},
+      {stage:2,title:"Екі шарт",prompt:"Бренді Logitech және қоймадағы саны 20-дан көп тауарларды табыңыз.",hint:"WHERE ішінде AND қолданыңыз.",starter:"SELECT *\nFROM products\nWHERE brand = 'Logitech' AND stock > 20;",check:(q,r)=>includes(q,"from products","and")&&/brand\s*=\s*['\"]logitech['\"]/i.test(q)&&/stock\s*>\s*20/i.test(q)&&rows(r).length===2},
+      {stage:2,title:"Балама шарт",prompt:"Жанры Фантастика немесе Мультфильм болатын фильмдерді көрсетіңіз.",hint:"Екі шартты OR арқылы байланыстырыңыз.",starter:"SELECT *\nFROM movies\nWHERE genre = 'Фантастика' OR genre = 'Мультфильм';",check:(q,r)=>includes(q,"from movies","or")&&rows(r).length===4},
+      {stage:3,title:"Бағаны өсу ретімен",prompt:"Тауарларды price бойынша арзандан қымбатқа сұрыптаңыз.",hint:"ORDER BY price ASC қолданыңыз.",starter:"SELECT name, price\nFROM products\nORDER BY price ASC;",check:(q,r)=>includes(q,"from products","order by price asc")&&sequence(r,"price").join(",")==="12000,25000,30000,85000,180000,418000"},
+      {stage:3,title:"Ең қымбат үш тауар",prompt:"Бағасы ең жоғары 3 тауардың name және price бағандарын көрсетіңіз.",hint:"DESC реті мен LIMIT 3 қолданыңыз.",starter:"SELECT name, price\nFROM products\nORDER BY price DESC\nLIMIT 3;",check:(q,r)=>includes(q,"from products","order by price desc","limit 3")&&sequence(r,"price").join(",")==="418000,180000,85000"},
+      {stage:4,title:"Тауар саны",prompt:"products кестесіндегі тауар санын COUNT арқылы табыңыз.",hint:"COUNT(*) барлық жолды санайды.",starter:"SELECT COUNT(*) AS total\nFROM products;",check:(q,r)=>includes(q,"from products")&&/count\s*\(\s*\*\s*\)/i.test(q)&&Number(firstValue(r))===6},
+      {stage:4,title:"Қордағы жалпы сан",prompt:"Барлық тауарлардың stock мәндерін қосыңыз.",hint:"SUM(stock) қолданыңыз.",starter:"SELECT SUM(stock) AS total_stock\nFROM products;",check:(q,r)=>includes(q,"from products")&&/sum\s*\(\s*stock\s*\)/i.test(q)&&Number(firstValue(r))===160},
+      {stage:4,title:"Орташа баға",prompt:"Барлық тауарлардың орташа бағасын табыңыз.",hint:"AVG(price) қолданыңыз.",starter:"SELECT AVG(price) AS average_price\nFROM products;",check:(q,r)=>includes(q,"from products")&&/avg\s*\(\s*price\s*\)/i.test(q)&&Number(firstValue(r))===125000},
+      {stage:4,title:"MIN және MAX",prompt:"Тауардың ең төмен және ең жоғары бағасын бір сұраныспен табыңыз.",hint:"SELECT ішінде MIN және MAX функцияларын үтірмен бөліңіз.",starter:"SELECT MIN(price) AS minimum,\n       MAX(price) AS maximum\nFROM products;",check:(q,r)=>includes(q,"from products")&&/min\s*\(/i.test(q)&&/max\s*\(/i.test(q)&&rows(r)[0]?.map(Number).join(",")==="12000,418000"},
+      {stage:4,title:"WHERE және AVG",prompt:"Logitech тауарларының орташа бағасын табыңыз.",hint:"AVG функциясына WHERE brand шартын қосыңыз.",starter:"SELECT AVG(price) AS average_price\nFROM products\nWHERE brand = 'Logitech';",check:(q,r)=>/avg\s*\(\s*price\s*\)/i.test(q)&&/brand\s*=\s*['\"]logitech['\"]/i.test(q)&&Number(firstValue(r))===21000},
+      {stage:5,title:"Жанр бойынша сан",prompt:"Әр жанрда неше фильм барын көрсетіңіз.",hint:"genre бағанын GROUP BY арқылы топтаңыз.",starter:"SELECT genre, COUNT(*) AS movie_count\nFROM movies\nGROUP BY genre;",check:(q,r)=>includes(q,"from movies","group by genre")&&/count\s*\(/i.test(q)&&rows(r).length===4},
+      {stage:5,title:"Жанрдың орташа рейтингі",prompt:"Әр жанрдағы фильмдердің орташа рейтингін есептеңіз.",hint:"GROUP BY genre және AVG(rating) қолданыңыз.",starter:"SELECT genre, AVG(rating) AS average_rating\nFROM movies\nGROUP BY genre;",check:(q,r)=>includes(q,"from movies","group by genre")&&/avg\s*\(\s*rating\s*\)/i.test(q)&&rows(r).length===4},
+      {stage:5,title:"Жанр рейтингі",prompt:"Әр жанрдағы фильм санын есептеп, көптен азға қарай сұрыптаңыз.",hint:"COUNT(*) нәтижесіне alias беріп, ORDER BY alias DESC жазыңыз.",starter:"SELECT genre, COUNT(*) AS movie_count\nFROM movies\nGROUP BY genre\nORDER BY movie_count DESC;",check:(q,r)=>includes(q,"from movies","group by genre","order by")&&/desc/i.test(q)&&rows(r).length===4&&Number(rows(r)[0]?.[1])===2},
+      {stage:6,title:"Сатылым кестесі",prompt:"sales кестесін құрыңыз: id INTEGER, product TEXT, quantity INTEGER, total INTEGER.",hint:"CREATE TABLE sales (...) командасын қолданыңыз.",starter:"CREATE TABLE sales (\n  id INTEGER,\n  product TEXT,\n  quantity INTEGER,\n  total INTEGER\n);",check:()=>tableExists("sales")&&tableColumns("sales").join(",")==="id,product,quantity,total"},
+      {stage:6,title:"Екі сатылым қосу",prompt:"sales кестесіне екі жол қосыңыз: (1, 'Смартфон', 1, 180000) және (2, 'Құлаққап', 2, 50000).",hint:"Бір INSERT ішінде екі VALUES жолын жазуға болады.",starter:"INSERT INTO sales (id, product, quantity, total)\nVALUES\n  (1, 'Смартфон', 1, 180000),\n  (2, 'Құлаққап', 2, 50000);",check:()=>tableExists("sales")&&Number(queryValue("SELECT COUNT(*) FROM sales"))===2},
+      {stage:6,title:"Бағаны өзгерту",prompt:"id = 1 сатылымының total мәнін 170000 деп өзгертіңіз.",hint:"UPDATE, SET және WHERE қолданыңыз.",starter:"UPDATE sales\nSET total = 170000\nWHERE id = 1;",check:()=>tableExists("sales")&&Number(queryValue("SELECT total FROM sales WHERE id=1"))===170000},
+      {stage:6,title:"Сатылымды өшіру",prompt:"sales кестесінен id = 2 жолын өшіріңіз.",hint:"DELETE FROM ... WHERE id = 2 жазыңыз.",starter:"DELETE FROM sales\nWHERE id = 2;",check:()=>tableExists("sales")&&Number(queryValue("SELECT COUNT(*) FROM sales"))===1&&Number(queryValue("SELECT id FROM sales"))===1}
     ];
-
-    const $ = id => document.getElementById(id);
-    const editor = $("sqlEditor");
-    const resultEl = $("result");
-    const messageEl = $("message");
-    const rowCountEl = $("rowCount");
-
-    function has(query, ...parts) { const u = query.toUpperCase().replace(/\s+/g, " "); return parts.every(p => u.includes(p.toUpperCase())); }
-    function escapeHtml(v) { return String(v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-    function clone(value) { return structuredClone(value); }
-    function splitComma(text) {
-      const out = []; let cur = "", depth = 0, quote = null;
-      for (const ch of text) {
-        if (quote) { cur += ch; if (ch === quote) quote = null; continue; }
-        if (ch === "'" || ch === '"') { quote = ch; cur += ch; continue; }
-        if (ch === "(") depth++;
-        if (ch === ")") depth--;
-        if (ch === "," && depth === 0) { out.push(cur.trim()); cur = ""; } else cur += ch;
-      }
-      if (cur.trim()) out.push(cur.trim()); return out;
+    let SQL,db,currentTask=0,currentName="",completed=new Set(),seconds=80*60,timerId=null,paused=false,activeTable="products";
+    const $=id=>document.getElementById(id);
+    const esc=v=>String(v??"NULL").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const initialSql=`
+      CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, category TEXT, stock INTEGER, price INTEGER, brand TEXT);
+      INSERT INTO products VALUES
+        (1,'Смартфон','Электроника',15,180000,'Samsung'),(2,'Құлаққап','Аксессуар',40,25000,'JBL'),
+        (3,'Ноутбук','Электроника',8,418000,'Lenovo'),(4,'Тінтуір','Аксессуар',60,12000,'Logitech'),
+        (5,'Пернетақта','Аксессуар',25,30000,'Logitech'),(6,'Ақылды сағат','Электроника',12,85000,'Xiaomi');
+      CREATE TABLE movies (id INTEGER PRIMARY KEY, title TEXT, genre TEXT, duration INTEGER, rating INTEGER, year INTEGER);
+      INSERT INTO movies VALUES
+        (1,'Аватар','Фантастика',162,8,2009),(2,'Интерстеллар','Фантастика',169,9,2014),
+        (3,'Коко','Мультфильм',105,9,2017),(4,'Такси','Комедия',89,7,1998),
+        (5,'Жан','Драма',130,8,2021),(6,'Ойыншықтар хикаясы','Мультфильм',81,8,1995);
+    `;
+    function resetDb(){if(db)db.close();db=new SQL.Database();db.run(initialSql);activeTable="products";renderTables();}
+    function tableExists(name){return Number(queryValue(`SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='${name.replaceAll("'","''")}'`))===1}
+    function tableColumns(name){if(!tableExists(name))return[];return db.exec(`PRAGMA table_info(${name})`)[0].values.map(r=>r[1])}
+    function queryValue(sql){return db.exec(sql)?.[0]?.values?.[0]?.[0]}
+    function dbTables(){return (db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")?.[0]?.values||[]).flat()}
+    function execute(){
+      const sql=$("editor").value.trim();if(!sql){setStatus("Алдымен SQL командасын жазыңыз","bad");return}
+      try{
+        const result=db.exec(sql);renderResult(result);renderTables();
+        const passed=tasks[currentTask].check(sql,result);
+        if(passed){if(!completed.has(currentTask)){completed.add(currentTask);saveProfile();setStatus(`Дұрыс! +5 ұпай. «${tasks[currentTask].title}» орындалды.`,"ok")}else setStatus("Дұрыс. Бұл тапсырма бұрын орындалған.","ok");renderAll()}
+        else setStatus("Команда орындалды, бірақ тапсырма шарты толық орындалмады. Нәтижені тексеріңіз.","bad")
+      }catch(e){setStatus("SQLite қатесі: "+e.message,"bad");$("result").innerHTML='<div class="empty">Сұранысты түзетіп, қайта орындаңыз</div>';$("rowInfo").textContent=""}
     }
-    function parseValue(raw) {
-      const t = raw.trim();
-      if ((t.startsWith("'") && t.endsWith("'")) || (t.startsWith('"') && t.endsWith('"'))) return t.slice(1, -1);
-      if (/^null$/i.test(t)) return null;
-      if (/^(true|false)$/i.test(t)) return /^true$/i.test(t);
-      if (!Number.isNaN(Number(t))) return Number(t);
-      return t;
+    function renderResult(result){
+      if(!result.length){$("result").innerHTML='<div class="empty">Команда орындалды. Кестелер бөлімін тексеріңіз.</div>';$("rowInfo").textContent="0 нәтиже";return}
+      const r=result[result.length-1],headers=r.columns,values=r.values;
+      $("result").innerHTML=makeTable(headers,values);$("rowInfo").textContent=`${values.length} жол`;
     }
-    function compare(a, op, b) {
-      if (op === "=") return a == b;
-      if (op === "!=" || op === "<>") return a != b;
-      if (op === ">") return a > b;
-      if (op === "<") return a < b;
-      if (op === ">=") return a >= b;
-      if (op === "<=") return a <= b;
-      return false;
+    function makeTable(headers,values){return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${values.map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+    function setStatus(text,type){$("status").textContent=text;$("status").className="status "+type}
+    function renderTaskList(){
+      $("taskList").innerHTML=stages.map(stage=>{const list=tasks.map((t,i)=>({t,i})).filter(x=>x.t.stage===stage.id);return `<div class="stage"><div class="stage-title"><span>${stage.title}</span><span>${stage.minutes} мин</span></div>${list.map(({t,i})=>`<button class="task ${i===currentTask?"active":""} ${completed.has(i)?"done":""}" data-i="${i}"><span class="num">${completed.has(i)?"✓":i+1}</span><span><b>${esc(t.title)}</b><small>${esc(t.prompt)}</small></span><span class="pts">5 ұпай</span></button>`).join("")}</div>`}).join("");
+      document.querySelectorAll(".task").forEach(b=>b.onclick=()=>selectTask(Number(b.dataset.i)));
     }
-    function conditionTest(row, text) {
-      if (!text) return true;
-      const orParts = text.split(/\s+OR\s+/i);
-      return orParts.some(orPart => orPart.split(/\s+AND\s+/i).every(part => {
-        const m = part.trim().match(/^(\w+)\s*(>=|<=|<>|!=|=|>|<)\s*(.+)$/i);
-        if (!m) throw new Error("WHERE шарты түсініксіз. Мысал: WHERE experience >= 5");
-        const [, col, op, raw] = m;
-        if (!(col in row)) throw new Error(`«${col}» бағаны табылмады`);
-        return compare(row[col], op, parseValue(raw));
-      }));
+    function selectTask(i){currentTask=i;const t=tasks[i],stage=stages.find(s=>s.id===t.stage);$("challengeIndex").textContent=i+1;$("challengeTitle").textContent=t.title;$("challengePrompt").textContent=t.prompt;$("stageChip").textContent=stage.title;$("timeChip").textContent=stage.minutes+" минуттық кезең";$("hintBox").classList.add("hidden");renderTaskList();}
+    function renderTables(){
+      const tables=dbTables();if(!tables.includes(activeTable))activeTable=tables[0];
+      $("tableTabs").innerHTML=tables.map(t=>`<button class="tab ${t===activeTable?"active":""}" data-table="${t}">${esc(t)}</button>`).join("");
+      document.querySelectorAll("[data-table]").forEach(b=>b.onclick=()=>{activeTable=b.dataset.table;renderTables()});
+      const r=db.exec(`SELECT * FROM ${activeTable} LIMIT 50`)[0];$("dataView").innerHTML=r?makeTable(r.columns,r.values):'<div class="empty">Кесте бос</div>';
     }
-    function parseClauses(rest) {
-      const found = [];
-      const re = /\b(WHERE|GROUP\s+BY|ORDER\s+BY|LIMIT)\b/ig; let m;
-      while ((m = re.exec(rest))) found.push({ key: m[1].toUpperCase().replace(/\s+/g, " "), start: m.index, end: re.lastIndex });
-      const clauses = {};
-      found.forEach((f, i) => { clauses[f.key] = rest.slice(f.end, found[i + 1]?.start ?? rest.length).trim(); });
-      return clauses;
-    }
-    function aggValue(fn, col, rows) {
-      if (fn === "COUNT") return col === "*" ? rows.length : rows.filter(r => r[col] !== null && r[col] !== undefined).length;
-      const values = rows.map(r => r[col]).filter(v => typeof v === "number");
-      if (!values.length) return null;
-      if (fn === "SUM") return values.reduce((a, b) => a + b, 0);
-      if (fn === "AVG") return Number((values.reduce((a, b) => a + b, 0) / values.length).toFixed(2));
-      if (fn === "MIN") return Math.min(...values);
-      if (fn === "MAX") return Math.max(...values);
-    }
-    function parseExpr(expr) {
-      const aliasMatch = expr.match(/^(.+?)\s+AS\s+(\w+)$/i);
-      const core = (aliasMatch ? aliasMatch[1] : expr).trim();
-      const alias = aliasMatch?.[2];
-      const agg = core.match(/^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(\*|\w+)\s*\)$/i);
-      if (agg) return { type: "agg", fn: agg[1].toUpperCase(), col: agg[2], key: alias || `${agg[1].toLowerCase()}_${agg[2] === "*" ? "all" : agg[2]}` };
-      const plain = core.match(/^(\w+)$/);
-      if (!plain) throw new Error(`SELECT ішіндегі «${expr}» бөлігі түсініксіз`);
-      return { type: "field", col: plain[1], key: alias || plain[1] };
-    }
-    function sortRows(rows, order) {
-      if (!order) return rows;
-      const m = order.match(/^(\w+)(?:\s+(ASC|DESC))?$/i);
-      if (!m) throw new Error("ORDER BY форматы: ORDER BY баған ASC немесе DESC");
-      const key = m[1], dir = (m[2] || "ASC").toUpperCase() === "DESC" ? -1 : 1;
-      return [...rows].sort((a, b) => {
-        if (!(key in a) || !(key in b)) throw new Error(`ORDER BY үшін «${key}» бағаны табылмады`);
-        return typeof a[key] === "number" ? (a[key] - b[key]) * dir : String(a[key]).localeCompare(String(b[key]), "kk") * dir;
-      });
-    }
-    function runSelect(sql) {
-      const m = sql.match(/^SELECT\s+([\s\S]+?)\s+FROM\s+(\w+)\s*([\s\S]*)$/i);
-      if (!m) throw new Error("SELECT форматы түсініксіз. SELECT ... FROM кесте деп жазыңыз");
-      const [, selectText, tableName, rest] = m;
-      if (!db[tableName]) throw new Error(`«${tableName}» кестесі табылмады`);
-      const clauses = parseClauses(rest);
-      let rows = db[tableName].filter(r => conditionTest(r, clauses.WHERE));
-      const expressions = selectText.trim() === "*" ? null : splitComma(selectText).map(parseExpr);
-      const hasAgg = expressions?.some(e => e.type === "agg");
-      let output;
-      if (clauses["GROUP BY"]) {
-        const groupCol = clauses["GROUP BY"].trim();
-        if (!db[tableName].length || !(groupCol in db[tableName][0])) throw new Error(`GROUP BY үшін «${groupCol}» бағаны табылмады`);
-        if (!expressions) throw new Error("GROUP BY кезінде SELECT ішінде топ бағанын және функцияны жазыңыз");
-        const groups = new Map();
-        rows.forEach(r => { const key = r[groupCol]; if (!groups.has(key)) groups.set(key, []); groups.get(key).push(r); });
-        output = [...groups.entries()].map(([key, groupRows]) => {
-          const obj = {};
-          expressions.forEach(e => {
-            if (e.type === "field") {
-              if (e.col !== groupCol) throw new Error(`«${e.col}» GROUP BY ішінде көрсетілмеген`);
-              obj[e.key] = key;
-            } else obj[e.key] = aggValue(e.fn, e.col, groupRows);
-          });
-          return obj;
-        });
-        output = sortRows(output, clauses["ORDER BY"]);
-      } else if (hasAgg) {
-        if (expressions.some(e => e.type === "field")) throw new Error("Қарапайым баған агрегаттық функциямен бірге жазылса, GROUP BY қажет");
-        const obj = {}; expressions.forEach(e => obj[e.key] = aggValue(e.fn, e.col, rows)); output = [obj];
-      } else {
-        rows = sortRows(rows, clauses["ORDER BY"]);
-        output = expressions ? rows.map(r => {
-          const obj = {}; expressions.forEach(e => {
-            if (!(e.col in r)) throw new Error(`«${e.col}» бағаны табылмады`);
-            obj[e.key] = r[e.col];
-          }); return obj;
-        }) : clone(rows);
-      }
-      if (clauses.LIMIT) {
-        const n = Number(clauses.LIMIT);
-        if (!Number.isInteger(n) || n < 0) throw new Error("LIMIT мәні нөл немесе оң бүтін сан болуы керек");
-        output = output.slice(0, n);
-      }
-      return { rows: output, message: `${output.length} жол көрсетілді` };
-    }
-    function runInsert(sql) {
-      const m = sql.match(/^INSERT\s+INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*([\s\S]+)$/i);
-      if (!m) throw new Error("INSERT форматы түсініксіз");
-      const [, table, colsText, valuesText] = m;
-      if (!db[table]) throw new Error(`«${table}» кестесі табылмады`);
-      const cols = splitComma(colsText);
-      const tuples = []; let depth = 0, quote = null, cur = "";
-      for (const ch of valuesText.trim()) {
-        if (quote) { cur += ch; if (ch === quote) quote = null; continue; }
-        if (ch === "'" || ch === '"') { quote = ch; cur += ch; continue; }
-        if (ch === "(") { if (depth++ > 0) cur += ch; continue; }
-        if (ch === ")") { if (--depth === 0) { tuples.push(splitComma(cur).map(parseValue)); cur = ""; } else cur += ch; continue; }
-        if (depth > 0) cur += ch;
-      }
-      if (!tuples.length) throw new Error("VALUES ішінде мәндер табылмады");
-      tuples.forEach(vals => {
-        if (vals.length !== cols.length) throw new Error("Бағандар мен мәндердің саны сәйкес емес");
-        const row = {}; cols.forEach((c, i) => row[c.trim()] = vals[i]); db[table].push(row);
-      });
-      renderSchema();
-      return { rows: [], message: `${tuples.length} жаңа жол қосылды` };
-    }
-    function runUpdate(sql) {
-      const m = sql.match(/^UPDATE\s+(\w+)\s+SET\s+([\s\S]+?)(?:\s+WHERE\s+([\s\S]+))?$/i);
-      if (!m) throw new Error("UPDATE форматы түсініксіз");
-      const [, table, setText, where] = m;
-      if (!db[table]) throw new Error(`«${table}» кестесі табылмады`);
-      if (!where && !confirm("WHERE жоқ. Барлық жолды өзгерткіңіз келе ме?")) return { rows: [], message: "Команда тоқтатылды" };
-      const assignments = splitComma(setText).map(a => {
-        const x = a.match(/^(\w+)\s*=\s*(.+)$/); if (!x) throw new Error("SET форматы түсініксіз"); return [x[1], parseValue(x[2])];
-      });
-      let count = 0; db[table].forEach(r => { if (conditionTest(r, where)) { assignments.forEach(([k,v]) => r[k] = v); count++; } });
-      renderSchema(); return { rows: [], message: `${count} жол өзгертілді` };
-    }
-    function runDelete(sql) {
-      const m = sql.match(/^DELETE\s+FROM\s+(\w+)(?:\s+WHERE\s+([\s\S]+))?$/i);
-      if (!m) throw new Error("DELETE форматы түсініксіз");
-      const [, table, where] = m;
-      if (!db[table]) throw new Error(`«${table}» кестесі табылмады`);
-      if (!where && !confirm("WHERE жоқ. Кестедегі барлық жолды өшіргіңіз келе ме?")) return { rows: [], message: "Команда тоқтатылды" };
-      const before = db[table].length; db[table] = db[table].filter(r => !conditionTest(r, where));
-      renderSchema(); return { rows: [], message: `${before - db[table].length} жол өшірілді` };
-    }
-    function execute(sql) {
-      const clean = sql.replace(/--.*$/gm, "").trim().replace(/;+\s*$/, "").trim();
-      if (!clean) throw new Error("Алдымен SQL командасын жазыңыз");
-      if (/;[\s\S]*\S/.test(clean)) throw new Error("Бір уақытта бір команданы орындаңыз");
-      if (/^SELECT\b/i.test(clean)) return runSelect(clean);
-      if (/^INSERT\b/i.test(clean)) return runInsert(clean);
-      if (/^UPDATE\b/i.test(clean)) return runUpdate(clean);
-      if (/^DELETE\b/i.test(clean)) return runDelete(clean);
-      throw new Error("Қолдау көрсетілетін командалар: SELECT, INSERT, UPDATE және DELETE");
-    }
-    function renderTable(rows) {
-      if (!rows.length) return '<div class="empty">Көрсетілетін жол жоқ</div>';
-      const cols = [...new Set(rows.flatMap(r => Object.keys(r)))];
-      return `<div class="table-wrap"><table><thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${cols.map(c => `<td>${escapeHtml(r[c] ?? "NULL")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
-    }
-    function setMessage(text, type = "info") { messageEl.textContent = text; messageEl.className = `message ${type}`; }
-    function runCurrent() {
-      try {
-        const result = execute(editor.value);
-        resultEl.innerHTML = result.rows.length ? renderTable(result.rows) : '<div class="empty">Команда орындалды. Кестені төменнен тексеріңіз.</div>';
-        rowCountEl.textContent = result.rows.length ? `${result.rows.length} жол` : "";
-        setMessage(result.message, "success");
-        if (activeTask !== null && tasks[activeTask].test(editor.value)) {
-          completed.add(activeTask); setMessage(`Дұрыс! ${tasks[activeTask].title} тапсырмасы орындалды.`, "success"); renderTasks(); updateProgress();
-        }
-      } catch (error) {
-        resultEl.innerHTML = '<div class="empty">Сұранысты түзетіп, қайта орындаңыз</div>';
-        rowCountEl.textContent = ""; setMessage(error.message, "error");
-      }
-    }
-    function renderExamples() {
-      $("examplesPanel").innerHTML = examples.map((e, i) => `<button class="example" data-example="${i}"><strong>${escapeHtml(e[0])}</strong><span>${escapeHtml(e[1])}</span></button>`).join("");
-      document.querySelectorAll("[data-example]").forEach(b => b.addEventListener("click", () => {
-        activeTask = null; editor.value = examples[Number(b.dataset.example)][2]; $("hintBox").hidden = true; editor.focus();
-      }));
-    }
-    function renderTasks() {
-      $("tasksPanel").innerHTML = tasks.map((t, i) => `<button class="task ${completed.has(i) ? "done" : ""} ${activeTask === i ? "active" : ""}" data-task="${i}"><strong><span class="task-number">${completed.has(i) ? "✓" : i + 1}</span>${escapeHtml(t.title)}</strong><span>${escapeHtml(t.prompt)}</span></button>`).join("");
-      document.querySelectorAll("[data-task]").forEach(b => b.addEventListener("click", () => {
-        activeTask = Number(b.dataset.task); editor.value = "-- Сұранысты осы жерге жазыңыз\n"; editor.focus(); renderTasks();
-        $("hintBox").hidden = true; setMessage(tasks[activeTask].prompt, "info");
-      }));
-    }
-    function updateProgress() {
-      $("progressText").textContent = `${completed.size} / ${tasks.length}`;
-      $("progressBar").style.width = `${completed.size / tasks.length * 100}%`;
-    }
-    function renderSchema() {
-      const table = $("tableSelect").value; $("schemaTable").innerHTML = renderTable(db[table]);
-    }
-    function switchTab(which) {
-      const examplesOn = which === "examples";
-      $("examplesPanel").hidden = !examplesOn; $("tasksPanel").hidden = examplesOn;
-      $("examplesTab").classList.toggle("active", examplesOn); $("tasksTab").classList.toggle("active", !examplesOn);
-      $("examplesTab").setAttribute("aria-selected", examplesOn); $("tasksTab").setAttribute("aria-selected", !examplesOn);
-    }
-
-    $("runBtn").addEventListener("click", runCurrent);
-    $("clearBtn").addEventListener("click", () => { editor.value = ""; editor.focus(); });
-    $("resetBtn").addEventListener("click", () => { db = clone(initialDb); renderSchema(); setMessage("Кестелер бастапқы күйге қайтарылды", "success"); resultEl.innerHTML = '<div class="empty">Нәтиже осы жерде көрсетіледі</div>'; rowCountEl.textContent = ""; });
-    $("showHintBtn").addEventListener("click", () => {
-      const box = $("hintBox");
-      if (activeTask === null) { box.innerHTML = "<strong>Кеңес</strong>Мысалды өзгертіп көріңіз немесе «Тапсырмалар» бөлігін ашыңыз."; }
-      else box.innerHTML = `<strong>Кеңес</strong>${escapeHtml(tasks[activeTask].hint)}`;
-      box.hidden = !box.hidden;
-    });
-    $("tableSelect").addEventListener("change", renderSchema);
-    $("examplesTab").addEventListener("click", () => switchTab("examples"));
-    $("tasksTab").addEventListener("click", () => switchTab("tasks"));
-    editor.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runCurrent(); } });
-
-    renderExamples(); renderTasks(); renderSchema(); updateProgress();
+    function profiles(){try{return JSON.parse(localStorage.getItem("sql80_profiles")||"{}")}catch{return{}}}
+    function saveProfile(){if(!currentName)return;const p=profiles();p[currentName]={score:completed.size*5,completed:[...completed],updatedAt:Date.now()};localStorage.setItem("sql80_profiles",JSON.stringify(p));renderLeaderboard()}
+    function loadProfile(name){const p=profiles()[name];completed=new Set(p?.completed||[]);currentName=name;localStorage.setItem("sql80_current",name);$("nameView").textContent=name.split(" ")[0];renderAll()}
+    function renderLeaderboard(){const list=Object.entries(profiles()).sort((a,b)=>b[1].score-a[1].score||a[1].updatedAt-b[1].updatedAt);$("leaderboard").innerHTML=list.length?list.map(([name,p],i)=>`<div class="leader"><span class="rank">${i+1}</span><span><strong>${esc(name)}</strong><small>${p.completed.length} / 20 тапсырма</small></span><strong>${p.score}</strong></div>`).join(""):'<div class="empty">Әзірге нәтиже жоқ</div>'}
+    function renderAll(){renderTaskList();selectTask(currentTask);const score=completed.size*5;$("scoreView").textContent=`${score} / 100`;$("progressText").textContent=`${completed.size} / 20`;$("progressBar").style.width=`${completed.size/20*100}%`;renderLeaderboard()}
+    function updateTimer(){const m=String(Math.floor(seconds/60)).padStart(2,"0"),s=String(seconds%60).padStart(2,"0");$("timerView").textContent=`${m}:${s}`;$("timerBox").classList.toggle("warn",seconds<=600);if(seconds<=0){clearInterval(timerId);setStatus("80 минут аяқталды. Нәтижені қорытындылаңыз.","info");return}seconds--}
+    function startTimer(){if(timerId)clearInterval(timerId);paused=false;$("pauseBtn").textContent="Үзіліс";timerId=setInterval(updateTimer,1000)}
+    function openNameModal(){$("nameModal").classList.remove("hidden");$("studentName").value="";setTimeout(()=>$("studentName").focus(),50)}
+    $("nameForm").onsubmit=e=>{e.preventDefault();const n=$("studentName").value.trim();if(n.length<2)return;loadProfile(n);$("nameModal").classList.add("hidden");seconds=80*60;updateTimer();startTimer();resetDb()};
+    $("runBtn").onclick=execute;$("clearBtn").onclick=()=>{$("editor").value="";$("editor").focus()};$("resetBtn").onclick=()=>{resetDb();setStatus("Дерекқор бастапқы күйге қайтарылды","info")};
+    $("hintBtn").onclick=()=>{$("hintBox").textContent=tasks[currentTask].hint;$("hintBox").classList.toggle("hidden")};$("starterBtn").onclick=()=>{$("editor").value=tasks[currentTask].starter;$("editor").focus()};
+    $("pauseBtn").onclick=()=>{paused=!paused;if(paused){clearInterval(timerId);timerId=null;$("pauseBtn").textContent="Жалғастыру"}else startTimer()};$("switchBtn").onclick=()=>{saveProfile();openNameModal()};
+    $("editor").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();execute()}});
+    (async()=>{
+      try{SQL=await initSqlJs({locateFile:file=>`https://sql.js.org/dist/${file}`});resetDb();$("loading").classList.add("hidden");renderLeaderboard();selectTask(0);const last=localStorage.getItem("sql80_current");if(last)loadProfile(last);openNameModal()}
+      catch(e){$("loading").innerHTML=`<div><b>SQLite жүктелмеді</b><span>${esc(e.message)}. Интернетті тексеріп, бетті жаңартыңыз.</span></div>`}
+    })();
   </script>
 </body>
 </html>
