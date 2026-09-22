@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQL практикумы — 80 минут</title>
+  <style>
+    :root{--navy:#0b1f33;--blue:#1677ff;--teal:#00a6a6;--green:#1d8f64;--amber:#e88c00;--red:#d9474d;--ink:#102a43;--muted:#607589;--bg:#edf3f7;--panel:#fff;--line:#d6e2eb;--soft:#f6f9fc;--softBlue:#eaf3ff;--softGreen:#eaf8f2;--shadow:0 12px 34px rgba(11,31,51,.09)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Arial,sans-serif;line-height:1.45}button,textarea,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+    .top{background:var(--navy);color:white;padding:18px 26px;display:flex;align-items:center;gap:22px;position:sticky;top:0;z-index:20;box-shadow:0 4px 20px rgba(4,17,29,.2)}
+    .brand{min-width:270px}.brand h1{font-size:26px;margin:0}.brand p{margin:3px 0 0;color:#b9cddd;font-size:13px}.top-stat{display:flex;align-items:center;gap:10px;margin-left:auto}.stat{background:#17344d;border:1px solid #294861;border-radius:12px;padding:8px 12px;min-width:100px}.stat span{display:block;color:#a9c2d5;font-size:11px;text-transform:uppercase}.stat strong{font-size:19px}.timer.warn strong{color:#ffc857}.top button{border:1px solid #446178;background:transparent;color:white;border-radius:10px;padding:10px 12px;font-weight:700}
+    .app{max-width:1600px;margin:0 auto;padding:18px;display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.side{max-height:calc(100vh - 100px);overflow:auto;position:sticky;top:92px}.side-head{padding:17px;border-bottom:1px solid var(--line)}.side-head h2{font-size:19px;margin:0 0 5px}.side-head p{font-size:13px;color:var(--muted);margin:0}.stages{padding:12px}.stage{margin-bottom:12px}.stage-title{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;padding:7px 5px}.task{width:100%;border:1px solid var(--line);border-radius:12px;background:white;text-align:left;padding:11px;margin-bottom:7px;display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:start;color:var(--ink)}.task:hover{border-color:var(--blue)}.task.active{border-color:var(--blue);background:var(--softBlue)}.task.done{border-color:#7acaae;background:var(--softGreen)}.num{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#dfeaf3;color:var(--navy);font-size:12px;font-weight:900}.done .num{background:var(--green);color:white}.task b{font-size:14px}.task small{display:block;color:var(--muted);font-size:12px;margin-top:3px}.pts{font-size:11px;color:var(--blue);font-weight:900;white-space:nowrap}
+    .main{min-width:0;display:grid;gap:16px}.lesson-progress{padding:14px 17px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.bar{height:11px;background:#e3ebf1;border-radius:999px;overflow:hidden}.bar div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal));transition:width .25s}.lesson-progress strong{font-size:14px}
+    .challenge{padding:18px}.challenge-top{display:flex;gap:12px;align-items:flex-start}.challenge-index{width:42px;height:42px;border-radius:12px;background:var(--blue);color:white;display:grid;place-items:center;font-weight:900}.challenge h2{margin:0 0 5px;font-size:22px}.challenge p{margin:0;color:var(--muted)}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.chip{font-size:12px;font-weight:800;padding:6px 9px;border-radius:999px;background:#eef4f8;color:var(--muted)}.challenge-actions{display:flex;gap:8px;margin-top:14px}.btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:10px;padding:9px 13px;font-weight:800}.btn:hover{border-color:var(--blue)}.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn.teal{background:var(--teal);border-color:var(--teal);color:white}.btn.danger{color:var(--red)}.hint{margin-top:12px;padding:12px 14px;background:#fff7e8;border:1px solid #f3cf8a;border-radius:11px;color:#815000;font-size:14px}
+    .work-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:16px}.editor-panel{overflow:hidden}.head{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.head h3{margin:0;font-size:17px}.head small{color:var(--muted)}textarea{width:100%;height:310px;border:0;outline:0;resize:vertical;background:#0f172a;color:#e6f1ff;padding:18px;font:17px/1.6 Consolas,"Courier New",monospace;tab-size:2}.toolbar{padding:12px 14px;background:#f8fbfd;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}.toolbar .keys{margin-left:auto;color:var(--muted);font-size:12px;align-self:center}kbd{padding:2px 5px;background:#e6edf3;border:1px solid #cad6e0;border-bottom-width:2px;border-radius:5px;color:var(--navy)}
+    .result-panel{min-width:0}.status{padding:11px 15px;font-weight:800;font-size:14px}.status.info{background:var(--softBlue);color:var(--blue)}.status.ok{background:var(--softGreen);color:var(--green)}.status.bad{background:#fff0f0;color:var(--red)}.result{padding:12px;min-height:310px;max-height:420px;overflow:auto}.empty{color:var(--muted);text-align:center;padding:55px 10px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;background:white}th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:14px}th{background:var(--navy);color:white;position:sticky;top:0}tbody tr:nth-child(even){background:#f5f8fb}
+    .bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px}.tabs{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line);overflow:auto}.tab{border:0;background:#edf3f7;color:var(--muted);padding:7px 10px;border-radius:9px;font-weight:800}.tab.active{background:var(--navy);color:white}.data{padding:12px;max-height:290px;overflow:auto}.leader-list{padding:10px 14px 16px}.leader{display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}.rank{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#e7eff5;font-weight:900}.leader:first-child .rank{background:#ffe3a3;color:#7b4a00}.leader small{color:var(--muted)}.leader strong:last-child{color:var(--blue)}
+    .modal{position:fixed;inset:0;background:rgba(5,18,31,.78);display:grid;place-items:center;z-index:100;padding:18px}.modal-card{width:min(480px,100%);background:white;border-radius:20px;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.35)}.modal-card h2{margin:0 0 8px;font-size:27px}.modal-card p{color:var(--muted);margin:0 0 18px}.modal-card label{display:block;font-weight:800;margin-bottom:7px}.modal-card input{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 13px;font-size:17px;outline:none}.modal-card input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,119,255,.12)}.modal-card button{width:100%;margin-top:13px}.note{font-size:12px;color:var(--muted);margin-top:12px;text-align:center}.loading{position:fixed;inset:0;background:var(--navy);color:white;display:grid;place-items:center;z-index:90;text-align:center}.loading b{font-size:24px}.loading span{display:block;color:#b9cddd;margin-top:8px}
+    @media(max-width:1100px){.app{grid-template-columns:310px minmax(0,1fr)}.work-grid,.bottom{grid-template-columns:1fr}.result{min-height:220px}.brand p{display:none}}
+    @media(max-width:760px){.top{position:static;flex-wrap:wrap}.brand{min-width:0;width:100%}.top-stat{margin:0;flex-wrap:wrap}.stat{min-width:92px}.app{grid-template-columns:1fr;padding:10px}.side{position:static;max-height:none}.work-grid{grid-template-columns:1fr}.challenge-top{align-items:flex-start}textarea{height:260px}.toolbar .keys{width:100%;margin-left:0}.bottom{grid-template-columns:1fr}}
+  </style>
+  <script src="https://sql.js.org/dist/sql-wasm.js"></script>
+</head>
+<body>
+  <div id="loading" class="loading"><div><b>SQLite жүктеліп жатыр...</b><span>Интернет байланысын тексеріңіз</span></div></div>
+  <div id="nameModal" class="modal hidden">
+    <form id="nameForm" class="modal-card">
+      <h2>Практикумға қош келдіңіз!</h2>
+      <p>Нәтиже мен ұпайды сақтау үшін аты-жөніңізді жазыңыз.</p>
+      <label for="studentName">Аты-жөні</label>
+      <input id="studentName" maxlength="50" placeholder="Мысалы: Айдана Серікқызы" autocomplete="name" required>
+      <button class="btn primary" type="submit">Сабақты бастау</button>
+      <div class="note">Рейтинг осы браузерде сақталады.</div>
+    </form>
+  </div>
+
+  <header class="top">
+    <div class="brand"><h1>SQL практикумы</h1><p>80 минут · 20 тапсырма · нақты SQLite</p></div>
+    <div class="top-stat">
+      <div class="stat"><span>Қатысушы</span><strong id="nameView">—</strong></div>
+      <div class="stat"><span>Ұпай</span><strong id="scoreView">0 / 100</strong></div>
+      <div class="stat timer" id="timerBox"><span>Уақыт</span><strong id="timerView">80:00</strong></div>
+      <button id="pauseBtn">Үзіліс</button><button id="switchBtn">Ауыстыру</button>
+    </div>
+  </header>
+
+  <main class="app">
+    <aside class="panel side">
+      <div class="side-head"><h2>Тапсырмалар картасы</h2><p>Кезеңдерді ретімен орындаңыз</p></div>
+      <div id="taskList" class="stages"></div>
+    </aside>
+
+    <section class="main">
+      <section class="panel lesson-progress"><div class="bar"><div id="progressBar"></div></div><strong id="progressText">0 / 20</strong></section>
+      <section class="panel challenge">
+        <div class="challenge-top"><div id="challengeIndex" class="challenge-index">1</div><div><h2 id="challengeTitle">Тапсырма</h2><p id="challengePrompt"></p></div></div>
+        <div class="chips"><span id="stageChip" class="chip"></span><span id="timeChip" class="chip"></span><span class="chip">5 ұпай</span></div>
+        <div class="challenge-actions"><button id="hintBtn" class="btn">Кеңес</button></div>
+        <div id="hintBox" class="hint hidden"></div>
+      </section>
+
+      <div class="work-grid">
+        <section class="panel editor-panel">
+          <div class="head"><h3>SQL редакторы</h3><small>Бір немесе бірнеше команда жазуға болады</small></div>
+          <textarea id="editor" spellcheck="false" aria-label="SQL редакторы" placeholder="SQL командасын өзіңіз жазыңыз..."></textarea>
+          <div class="toolbar"><button id="runBtn" class="btn primary">▶ Орындау және тексеру</button><button id="clearBtn" class="btn">Тазалау</button><button id="resetBtn" class="btn danger">Дерекқорды қалпына келтіру</button><span class="keys"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></span></div>
+        </section>
+        <section class="panel result-panel" aria-live="polite">
+          <div class="head"><h3>Нәтиже</h3><small id="rowInfo"></small></div>
+          <div id="status" class="status info">Сұранысты орындауға дайын</div>
+          <div id="result" class="result"><div class="empty">Нәтиже осы жерде көрсетіледі</div></div>
+        </section>
+      </div>
+
+      <div class="bottom">
+        <section class="panel"><div class="head"><h3>Дерекқор кестелері</h3><small>Сұраныстан кейін жаңарады</small></div><div id="tableTabs" class="tabs"></div><div id="dataView" class="data"></div></section>
+        <section class="panel"><div class="head"><h3>Рейтинг</h3><small>Осы құрылғыдағы нәтижелер</small></div><div id="leaderboard" class="leader-list"></div></section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const stages=[
+      {id:1,title:"1. Қыздыру",minutes:10,color:"#1677ff"},
+      {id:2,title:"2. WHERE және шарттар",minutes:15,color:"#00a6a6"},
+      {id:3,title:"3. ORDER BY және LIMIT",minutes:10,color:"#7257d5"},
+      {id:4,title:"4. Агрегаттық функциялар",minutes:15,color:"#e88c00"},
+      {id:5,title:"5. GROUP BY",minutes:15,color:"#1d8f64"},
+      {id:6,title:"6. Кесте және деректі өзгерту",minutes:15,color:"#d9474d"}
+    ];
+    const norm=s=>s.toLowerCase().replace(/--.*$/gm,"").replace(/\s+/g," ").trim();
+    const includes=(q,...parts)=>parts.every(p=>norm(q).includes(p.toLowerCase()));
+    const firstValue=r=>r?.[0]?.values?.[0]?.[0];
+    const rows=r=>r?.[0]?.values||[];
+    const cols=r=>r?.[0]?.columns||[];
+    const sequence=(r,col)=>{const i=cols(r).indexOf(col);return i<0?[]:rows(r).map(x=>Number(x[i]));};
+    const tasks=[
+      {stage:1,title:"Дүкендегі барлық тауар",prompt:"products кестесіндегі барлық баған мен жолды көрсетіңіз.",hint:"SELECT * және FROM products жазыңыз.",starter:"SELECT *\nFROM products;",check:(q,r)=>includes(q,"select *","from products")&&rows(r).length===6},
+      {stage:1,title:"Қажетті бағандар",prompt:"Фильмдердің тек title және rating бағандарын көрсетіңіз.",hint:"Баған атауларын үтірмен бөліңіз.",starter:"SELECT title, rating\nFROM movies;",check:(q,r)=>includes(q,"from movies")&&cols(r).join(",")==="title,rating"&&rows(r).length===6},
+      {stage:2,title:"Қысқа фильмдер",prompt:"movies кестесінен ұзақтығы 105 минуттан аспайтын фильмдерді көрсетіңіз.",hint:"WHERE duration <= 105 шартын қолданыңыз.",starter:"SELECT *\nFROM movies\nWHERE duration <= 105;",check:(q,r)=>includes(q,"from movies")&&/where\s+duration\s*<=\s*105/i.test(q)&&rows(r).length===3},
+      {stage:2,title:"Logitech тауарлары",prompt:"Бренді Logitech болатын тауарларды көрсетіңіз.",hint:"Мәтін бір тырнақшаға жазылады.",starter:"SELECT *\nFROM products\nWHERE brand = 'Logitech';",check:(q,r)=>includes(q,"from products")&&/where\s+brand\s*=\s*['\"]logitech['\"]/i.test(q)&&rows(r).length===2},
+      {stage:2,title:"Екі шарт",prompt:"Бренді Logitech және қоймадағы саны 20-дан көп тауарларды табыңыз.",hint:"WHERE ішінде AND қолданыңыз.",starter:"SELECT *\nFROM products\nWHERE brand = 'Logitech' AND stock > 20;",check:(q,r)=>includes(q,"from products","and")&&/brand\s*=\s*['\"]logitech['\"]/i.test(q)&&/stock\s*>\s*20/i.test(q)&&rows(r).length===2},
+      {stage:2,title:"Балама шарт",prompt:"Жанры Фантастика немесе Мультфильм болатын фильмдерді көрсетіңіз.",hint:"Екі шартты OR арқылы байланыстырыңыз.",starter:"SELECT *\nFROM movies\nWHERE genre = 'Фантастика' OR genre = 'Мультфильм';",check:(q,r)=>includes(q,"from movies","or")&&rows(r).length===4},
+      {stage:3,title:"Бағаны өсу ретімен",prompt:"Тауарларды price бойынша арзандан қымбатқа сұрыптаңыз.",hint:"ORDER BY price ASC қолданыңыз.",starter:"SELECT name, price\nFROM products\nORDER BY price ASC;",check:(q,r)=>includes(q,"from products","order by price asc")&&sequence(r,"price").join(",")==="12000,25000,30000,85000,180000,418000"},
+      {stage:3,title:"Ең қымбат үш тауар",prompt:"Бағасы ең жоғары 3 тауардың name және price бағандарын көрсетіңіз.",hint:"DESC реті мен LIMIT 3 қолданыңыз.",starter:"SELECT name, price\nFROM products\nORDER BY price DESC\nLIMIT 3;",check:(q,r)=>includes(q,"from products","order by price desc","limit 3")&&sequence(r,"price").join(",")==="418000,180000,85000"},
+      {stage:4,title:"Тауар саны",prompt:"products кестесіндегі тауар санын COUNT арқылы табыңыз.",hint:"COUNT(*) барлық жолды санайды.",starter:"SELECT COUNT(*) AS total\nFROM products;",check:(q,r)=>includes(q,"from products")&&/count\s*\(\s*\*\s*\)/i.test(q)&&Number(firstValue(r))===6},
+      {stage:4,title:"Қордағы жалпы сан",prompt:"Барлық тауарлардың stock мәндерін қосыңыз.",hint:"SUM(stock) қолданыңыз.",starter:"SELECT SUM(stock) AS total_stock\nFROM products;",check:(q,r)=>includes(q,"from products")&&/sum\s*\(\s*stock\s*\)/i.test(q)&&Number(firstValue(r))===160},
+      {stage:4,title:"Орташа баға",prompt:"Барлық тауарлардың орташа бағасын табыңыз.",hint:"AVG(price) қолданыңыз.",starter:"SELECT AVG(price) AS average_price\nFROM products;",check:(q,r)=>includes(q,"from products")&&/avg\s*\(\s*price\s*\)/i.test(q)&&Number(firstValue(r))===125000},
+      {stage:4,title:"MIN және MAX",prompt:"Тауардың ең төмен және ең жоғары бағасын бір сұраныспен табыңыз.",hint:"SELECT ішінде MIN және MAX функцияларын үтірмен бөліңіз.",starter:"SELECT MIN(price) AS minimum,\n       MAX(price) AS maximum\nFROM products;",check:(q,r)=>includes(q,"from products")&&/min\s*\(/i.test(q)&&/max\s*\(/i.test(q)&&rows(r)[0]?.map(Number).join(",")==="12000,418000"},
+      {stage:4,title:"WHERE және AVG",prompt:"Logitech тауарларының орташа бағасын табыңыз.",hint:"AVG функциясына WHERE brand шартын қосыңыз.",starter:"SELECT AVG(price) AS average_price\nFROM products\nWHERE brand = 'Logitech';",check:(q,r)=>/avg\s*\(\s*price\s*\)/i.test(q)&&/brand\s*=\s*['\"]logitech['\"]/i.test(q)&&Number(firstValue(r))===21000},
+      {stage:5,title:"Жанр бойынша сан",prompt:"Әр жанрда неше фильм барын көрсетіңіз.",hint:"genre бағанын GROUP BY арқылы топтаңыз.",starter:"SELECT genre, COUNT(*) AS movie_count\nFROM movies\nGROUP BY genre;",check:(q,r)=>includes(q,"from movies","group by genre")&&/count\s*\(/i.test(q)&&rows(r).length===4},
+      {stage:5,title:"Жанрдың орташа рейтингі",prompt:"Әр жанрдағы фильмдердің орташа рейтингін есептеңіз.",hint:"GROUP BY genre және AVG(rating) қолданыңыз.",starter:"SELECT genre, AVG(rating) AS average_rating\nFROM movies\nGROUP BY genre;",check:(q,r)=>includes(q,"from movies","group by genre")&&/avg\s*\(\s*rating\s*\)/i.test(q)&&rows(r).length===4},
+      {stage:5,title:"Жанр рейтингі",prompt:"Әр жанрдағы фильм санын есептеп, көптен азға қарай сұрыптаңыз.",hint:"COUNT(*) нәтижесіне alias беріп, ORDER BY alias DESC жазыңыз.",starter:"SELECT genre, COUNT(*) AS movie_count\nFROM movies\nGROUP BY genre\nORDER BY movie_count DESC;",check:(q,r)=>includes(q,"from movies","group by genre","order by")&&/desc/i.test(q)&&rows(r).length===4&&Number(rows(r)[0]?.[1])===2},
+      {stage:6,title:"Сатылым кестесі",prompt:"sales кестесін құрыңыз: id INTEGER, product TEXT, quantity INTEGER, total INTEGER.",hint:"CREATE TABLE sales (...) командасын қолданыңыз.",starter:"CREATE TABLE sales (\n  id INTEGER,\n  product TEXT,\n  quantity INTEGER,\n  total INTEGER\n);",check:()=>tableExists("sales")&&tableColumns("sales").join(",")==="id,product,quantity,total"},
+      {stage:6,title:"Екі сатылым қосу",prompt:"sales кестесіне екі жол қосыңыз: (1, 'Смартфон', 1, 180000) және (2, 'Құлаққап', 2, 50000).",hint:"Бір INSERT ішінде екі VALUES жолын жазуға болады.",starter:"INSERT INTO sales (id, product, quantity, total)\nVALUES\n  (1, 'Смартфон', 1, 180000),\n  (2, 'Құлаққап', 2, 50000);",check:()=>tableExists("sales")&&Number(queryValue("SELECT COUNT(*) FROM sales"))===2},
+      {stage:6,title:"Бағаны өзгерту",prompt:"id = 1 сатылымының total мәнін 170000 деп өзгертіңіз.",hint:"UPDATE, SET және WHERE қолданыңыз.",starter:"UPDATE sales\nSET total = 170000\nWHERE id = 1;",check:()=>tableExists("sales")&&Number(queryValue("SELECT total FROM sales WHERE id=1"))===170000},
+      {stage:6,title:"Сатылымды өшіру",prompt:"sales кестесінен id = 2 жолын өшіріңіз.",hint:"DELETE FROM ... WHERE id = 2 жазыңыз.",starter:"DELETE FROM sales\nWHERE id = 2;",check:()=>tableExists("sales")&&Number(queryValue("SELECT COUNT(*) FROM sales"))===1&&Number(queryValue("SELECT id FROM sales"))===1}
+    ];
+    let SQL,db,currentTask=0,currentName="",completed=new Set(),seconds=80*60,timerId=null,paused=false,activeTable="products";
+    const $=id=>document.getElementById(id);
+    const esc=v=>String(v??"NULL").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const initialSql=`
+      CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, category TEXT, stock INTEGER, price INTEGER, brand TEXT);
+      INSERT INTO products VALUES
+        (1,'Смартфон','Электроника',15,180000,'Samsung'),(2,'Құлаққап','Аксессуар',40,25000,'JBL'),
+        (3,'Ноутбук','Электроника',8,418000,'Lenovo'),(4,'Тінтуір','Аксессуар',60,12000,'Logitech'),
+        (5,'Пернетақта','Аксессуар',25,30000,'Logitech'),(6,'Ақылды сағат','Электроника',12,85000,'Xiaomi');
+      CREATE TABLE movies (id INTEGER PRIMARY KEY, title TEXT, genre TEXT, duration INTEGER, rating INTEGER, year INTEGER);
+      INSERT INTO movies VALUES
+        (1,'Аватар','Фантастика',162,8,2009),(2,'Интерстеллар','Фантастика',169,9,2014),
+        (3,'Коко','Мультфильм',105,9,2017),(4,'Такси','Комедия',89,7,1998),
+        (5,'Жан','Драма',130,8,2021),(6,'Ойыншықтар хикаясы','Мультфильм',81,8,1995);
+    `;
+    function resetDb(){if(db)db.close();db=new SQL.Database();db.run(initialSql);activeTable="products";renderTables();}
+    function tableExists(name){return Number(queryValue(`SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='${name.replaceAll("'","''")}'`))===1}
+    function tableColumns(name){if(!tableExists(name))return[];return db.exec(`PRAGMA table_info(${name})`)[0].values.map(r=>r[1])}
+    function queryValue(sql){return db.exec(sql)?.[0]?.values?.[0]?.[0]}
+    function dbTables(){return (db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")?.[0]?.values||[]).flat()}
+    function execute(){
+      const sql=$("editor").value.trim();if(!sql){setStatus("Алдымен SQL командасын жазыңыз","bad");return}
+      try{
+        const result=db.exec(sql);renderResult(result);renderTables();
+        const passed=tasks[currentTask].check(sql,result);
+        if(passed){if(!completed.has(currentTask)){completed.add(currentTask);saveProfile();setStatus(`Дұрыс! +5 ұпай. «${tasks[currentTask].title}» орындалды.`,"ok")}else setStatus("Дұрыс. Бұл тапсырма бұрын орындалған.","ok");renderAll()}
+        else setStatus("Команда орындалды, бірақ тапсырма шарты толық орындалмады. Нәтижені тексеріңіз.","bad")
+      }catch(e){setStatus("SQLite қатесі: "+e.message,"bad");$("result").innerHTML='<div class="empty">Сұранысты түзетіп, қайта орындаңыз</div>';$("rowInfo").textContent=""}
+    }
+    function renderResult(result){
+      if(!result.length){$("result").innerHTML='<div class="empty">Команда орындалды. Кестелер бөлімін тексеріңіз.</div>';$("rowInfo").textContent="0 нәтиже";return}
+      const r=result[result.length-1],headers=r.columns,values=r.values;
+      $("result").innerHTML=makeTable(headers,values);$("rowInfo").textContent=`${values.length} жол`;
+    }
+    function makeTable(headers,values){return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${values.map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+    function setStatus(text,type){$("status").textContent=text;$("status").className="status "+type}
+    function renderTaskList(){
+      $("taskList").innerHTML=stages.map(stage=>{const list=tasks.map((t,i)=>({t,i})).filter(x=>x.t.stage===stage.id);return `<div class="stage"><div class="stage-title"><span>${stage.title}</span><span>${stage.minutes} мин</span></div>${list.map(({t,i})=>`<button class="task ${i===currentTask?"active":""} ${completed.has(i)?"done":""}" data-i="${i}"><span class="num">${completed.has(i)?"✓":i+1}</span><span><b>${esc(t.title)}</b><small>${esc(t.prompt)}</small></span><span class="pts">5 ұпай</span></button>`).join("")}</div>`}).join("");
+      document.querySelectorAll(".task").forEach(b=>b.onclick=()=>selectTask(Number(b.dataset.i)));
+    }
+    function selectTask(i){currentTask=i;const t=tasks[i],stage=stages.find(s=>s.id===t.stage);$("challengeIndex").textContent=i+1;$("challengeTitle").textContent=t.title;$("challengePrompt").textContent=t.prompt;$("stageChip").textContent=stage.title;$("timeChip").textContent=stage.minutes+" минуттық кезең";$("hintBox").classList.add("hidden");renderTaskList();}
+    function renderTables(){
+      const tables=dbTables();if(!tables.includes(activeTable))activeTable=tables[0];
+      $("tableTabs").innerHTML=tables.map(t=>`<button class="tab ${t===activeTable?"active":""}" data-table="${t}">${esc(t)}</button>`).join("");
+      document.querySelectorAll("[data-table]").forEach(b=>b.onclick=()=>{activeTable=b.dataset.table;renderTables()});
+      const r=db.exec(`SELECT * FROM ${activeTable} LIMIT 50`)[0];$("dataView").innerHTML=r?makeTable(r.columns,r.values):'<div class="empty">Кесте бос</div>';
+    }
+    function profiles(){try{return JSON.parse(localStorage.getItem("sql80_profiles")||"{}")}catch{return{}}}
+    function saveProfile(){if(!currentName)return;const p=profiles();p[currentName]={score:completed.size*5,completed:[...completed],updatedAt:Date.now()};localStorage.setItem("sql80_profiles",JSON.stringify(p));renderLeaderboard()}
+    function loadProfile(name){const p=profiles()[name];completed=new Set(p?.completed||[]);currentName=name;localStorage.setItem("sql80_current",name);$("nameView").textContent=name.split(" ")[0];renderAll()}
+    function renderLeaderboard(){const list=Object.entries(profiles()).sort((a,b)=>b[1].score-a[1].score||a[1].updatedAt-b[1].updatedAt);$("leaderboard").innerHTML=list.length?list.map(([name,p],i)=>`<div class="leader"><span class="rank">${i+1}</span><span><strong>${esc(name)}</strong><small>${p.completed.length} / 20 тапсырма</small></span><strong>${p.score}</strong></div>`).join(""):'<div class="empty">Әзірге нәтиже жоқ</div>'}
+    function renderAll(){renderTaskList();selectTask(currentTask);const score=completed.size*5;$("scoreView").textContent=`${score} / 100`;$("progressText").textContent=`${completed.size} / 20`;$("progressBar").style.width=`${completed.size/20*100}%`;renderLeaderboard()}
+    function updateTimer(){const m=String(Math.floor(seconds/60)).padStart(2,"0"),s=String(seconds%60).padStart(2,"0");$("timerView").textContent=`${m}:${s}`;$("timerBox").classList.toggle("warn",seconds<=600);if(seconds<=0){clearInterval(timerId);setStatus("80 минут аяқталды. Нәтижені қорытындылаңыз.","info");return}seconds--}
+    function startTimer(){if(timerId)clearInterval(timerId);paused=false;$("pauseBtn").textContent="Үзіліс";timerId=setInterval(updateTimer,1000)}
+    function openNameModal(){$("nameModal").classList.remove("hidden");$("studentName").value="";setTimeout(()=>$("studentName").focus(),50)}
+    $("nameForm").onsubmit=e=>{e.preventDefault();const n=$("studentName").value.trim();if(n.length<2)return;loadProfile(n);$("nameModal").classList.add("hidden");seconds=80*60;updateTimer();startTimer();resetDb()};
+    $("runBtn").onclick=execute;$("clearBtn").onclick=()=>{$("editor").value="";$("editor").focus()};$("resetBtn").onclick=()=>{resetDb();setStatus("Дерекқор бастапқы күйге қайтарылды","info")};
+    $("hintBtn").onclick=()=>{$("hintBox").textContent=tasks[currentTask].hint;$("hintBox").classList.toggle("hidden")};
+    $("pauseBtn").onclick=()=>{paused=!paused;if(paused){clearInterval(timerId);timerId=null;$("pauseBtn").textContent="Жалғастыру"}else startTimer()};$("switchBtn").onclick=()=>{saveProfile();openNameModal()};
+    $("editor").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();execute()}});
+    (async()=>{
+      try{SQL=await initSqlJs({locateFile:file=>`https://sql.js.org/dist/${file}`});resetDb();$("loading").classList.add("hidden");renderLeaderboard();selectTask(0);const last=localStorage.getItem("sql80_current");if(last)loadProfile(last);openNameModal()}
+      catch(e){$("loading").innerHTML=`<div><b>SQLite жүктелмеді</b><span>${esc(e.message)}. Интернетті тексеріп, бетті жаңартыңыз.</span></div>`}
+    })();
+  </script>
+</body>
+</html>
